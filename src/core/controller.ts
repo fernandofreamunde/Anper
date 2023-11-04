@@ -1,4 +1,3 @@
-// import { prisma } from '@/lib/prisma'
 import {
   ProcessorParams,
   dtoRegistry,
@@ -7,7 +6,7 @@ import {
 } from './registry'
 import { PrismaClient } from '@prisma/client'
 
-interface ICoreController {
+export interface ICoreController {
   process: (params: ProcessorParams) => Promise<void>
 }
 
@@ -267,4 +266,4 @@ class CoreController implements ICoreController {
   }
 }
 
-// export default new CoreController()
+export default new CoreController(PrismaClient)
