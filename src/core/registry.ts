@@ -16,7 +16,7 @@ export interface IProcessor {
   process: (params: ProcessorParams) => Promise<void>
 }
 
-class ProcessorRegistry {
+class ControllerRegistry {
   private processors: IProcessor[] = []
 
   public register(processor: IProcessor) {
@@ -28,7 +28,7 @@ class ProcessorRegistry {
   }
 }
 
-export const processorRegistry = new ProcessorRegistry()
+export const controllerRegistry = new ControllerRegistry()
 
 /// ----------------------------
 
@@ -144,3 +144,19 @@ class ValidationRegistry {
 }
 
 export const validationRegistry = new ValidationRegistry()
+
+/// ----------------------------
+
+class ModelRegistry {
+  private models: string[] = []
+
+  public register(models: string[]) {
+    this.models = models
+  }
+
+  public getModels(): string[] {
+    return this.models
+  }
+}
+
+export const modelRegistry = new ModelRegistry()

@@ -1,11 +1,17 @@
 {
   "name": "@anper/anper",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Anper is a framework for fast development/prototyping REST APIs with Node.js. It is built on top of Fastify uses TypeScript and Prisma. It is designed to be simple, fast, and easy to use.",
-  "main": "index.js",
+  "main": "build/index.js",
+  "module": "build/index.mjs",
+  "types": "build/index.d.ts",
   "scripts": {
     "build": "tsup src --out-dir build --format esm,cjs --dts",
     "dev": "tsup src --out-dir build --format esm,cjs --dts --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fernandofreamunde/Anper.git"
   },
   "keywords": [],
   "author": "Fernando Andrade",

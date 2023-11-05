@@ -1,19 +1,17 @@
-import { PrismaClient } from '@prisma/client'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import {
   RequestMethod,
   accessControlRegistry,
   IAccessRule,
-  processorRegistry,
+  controllerRegistry,
+  modelRegistry,
 } from './registry'
 import controller from './controller'
 
 export async function apiRoutes(app: FastifyInstance) {
-  const prismaModels = Object.keys(PrismaClient.ModelName)
+  const prismaModels = modelRegistry.getModels()
 
   prismaModels.forEach((model) => {
-    // console.log(Object.keys(prisma[model.toLowerCase()].fields)) // this will be useful for the mapper and validation
-
     const modelAccessRules = accessControlRegistry.getAccessRulesFor(model)
 
     const none = modelAccessRules.filter((rule) =>
@@ -112,7 +110,7 @@ async function getProcessorFor(
   request: FastifyRequest,
   reply: FastifyReply,
 ): Promise<void> {
-  const processor = await processorRegistry.getProcessorFor({
+  const processor = await controllerRegistry.getProcessorFor({
     model,
     request,
   })

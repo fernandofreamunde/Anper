@@ -12,6 +12,7 @@ export interface ICoreController {
 
 class CoreController implements ICoreController {
   constructor(private prisma: PrismaClient) {}
+
   async process({ model, reply, request }: ProcessorParams): Promise<any> {
     const prismaModel = this.prisma[model] as any
     const params = request.params as { id: string }
@@ -266,4 +267,5 @@ class CoreController implements ICoreController {
   }
 }
 
-export default new CoreController(PrismaClient)
+const coreController = new CoreController(PrismaClient)
+export default coreController
