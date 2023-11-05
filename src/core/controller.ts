@@ -33,7 +33,7 @@ class CoreController implements ICoreController {
     }
 
     if (!params.id) {
-      // we declare the route is not found from this poin on the routes need :id param
+      // we declare the route is not found from this point on the routes need the :id param
       reply.status(404).send({ message: 'Not found' })
     }
 
@@ -113,7 +113,7 @@ class CoreController implements ICoreController {
    * Adds simple validation to the default processor.
    *
    * Validate will simply check if the data has all the
-   * required fields according to the database schcema
+   * required fields according to the database schema
    * will not validate sub resources/related data only
    * ask for the relation id
    *
@@ -167,7 +167,6 @@ class CoreController implements ICoreController {
         return field
       })
       .map((key) => {
-        // const field = fields.find((f) => f.name === key)
         return {
           [key]: query[key] === 'asc' ? 'asc' : 'desc',
         }
