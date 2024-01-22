@@ -28,7 +28,7 @@ class CoreController implements ICoreController {
     }
 
     if (request.method === 'POST') {
-      this.createItem(model, body, reply)
+      await this.createItem(model, body, reply)
       return
     }
 
@@ -133,6 +133,7 @@ class CoreController implements ICoreController {
 
     const modelFields = this.getModelFields(model)
 
+    var validData = {}
     // check if data has all the required fields
     // if not throw an error
     modelFields?.forEach((field) => {
@@ -147,14 +148,23 @@ class CoreController implements ICoreController {
 
       if (field.kind === 'object') {
         return
-      }
+      }      
 
       if (field.isRequired && !data[field.name]) {
         errors.push(`${field.name} is required`)
       }
+
+      // parse the data to the correct type
+      if (this.prisma[model].fields[field].typeName == "Int") {
+        validData[field] = parseInt(data[field])
+      } else if (this.prisma[model].fields[field].typeName == "Float") {
+        validData[field] = parseFloat(data[field])
+      } else {
+        validData[field] = data[field]
+      }
     })
 
-    return { errors, data: model }
+    return { errors, data: validData }
   }
 
   getSortingOptions(model, query): any {
@@ -176,7 +186,7 @@ class CoreController implements ICoreController {
   }
 
   getModelFields(model: string): any {
-    return this.prisma.$dmmf.datamodel.models.find((m) => m.name === model)?.fields
+    return Object.keys(this.prisma[model].fields)
   }
 
   getCustomFilters(model: string, queryItems: any): any {
@@ -211,15 +221,38 @@ class CoreController implements ICoreController {
       reply.status(400).send({ errors })
     }
 
-    let data = await prismaModel.create({ data: validData })
+    try {
+      let data = await prismaModel.create({ data: validData })
 
-    const mapper = dtoRegistry.getDtoFor(model)
+      const mapper = dtoRegistry.getDtoFor(model)
+  
+      if (mapper) {
+        data = await mapper.toDto(data)
+      }
+  
+      reply.status(201).send(data)
+      
+    } catch (error) {
+      //  use regex to find if the error is a unique constraint error
+      var dd = /Unique constraint failed on the fields:\s\((`.+`)\)/gm
+      var r = error.message.match(dd);
+      if (r) {
+        var dd = /\((`.+`)\)/gm
+        var r = error.message.match(dd);
+        var fields = r[0].replace('(', '').replace(')', '')
+        reply.status(400).send({ errors: [`${fields} already taken`] })
+      }
 
-    if (mapper) {
-      data = await mapper.toDto(data)
+      //  use regex to find if the error is a missing argument
+      var dd = /Argument (`.+`) is missing./gm
+      var r = error.message.match(dd);
+      if (r) {
+        reply.status(400).send({ errors: [`${r}`] })
+      }
+      
+      reply.status(400).send({ errors: "Something went wrong."})
     }
-
-    reply.status(201).send(data)
+    reply.status(400).send({ errors: "Something went wrong."})
   }
 
   setPagination(query: any): { take: number; skip: number } {
@@ -266,5 +299,5 @@ class CoreController implements ICoreController {
   }
 }
 
-const coreController = new CoreController(PrismaClient)
+const coreController = new CoreController(new PrismaClient())
 export default coreController
