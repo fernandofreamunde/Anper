@@ -17,6 +17,7 @@
   "author": "Fernando Andrade",
   "license": "MIT",
   "devDependencies": {
+    "@changesets/cli": "^2.27.1",
     "@prisma/client": "^5.5.2",
     "fastify": "^4.24.3",
     "prisma": "^5.5.2",
