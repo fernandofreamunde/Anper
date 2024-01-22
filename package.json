@@ -8,7 +8,8 @@
   "scripts": {
     "build": "tsup src --out-dir build --format esm,cjs --dts",
     "change:init": "changesets",
-    "change:finish": "changesets version",
+    "change:finish": "changeset version",
+    "change:release": "npm run build && changeset publish",
     "dev": "tsup src --out-dir build --format esm,cjs --dts --watch"
   },
   "repository": {
