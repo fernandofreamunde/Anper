@@ -60,7 +60,9 @@ Probably this should have a better name since we are actually telling Anper what
 
 But since we are pass the hooks the name kinda fits... hence my naming choice.
 
-Initially I was aiming to create all the routes for all the methods if no access rule was set. But eventually thought it would be better to have more control over it, and it made things simpler for me too.
+~~Initially I was aiming to create all the routes for all the methods if no access rule was set. But eventually thought it would be better to have more control over it, and it made things simpler for me too.~~
+
+Never mind I was drunk when I decided that, is the only explanation... not sure what I was thinking...
 
 To register a rule, we have to use the `accessControlRegistry` like this:
 
@@ -84,14 +86,13 @@ So this example would allow the following routes to be created:
   DELETE /api/users/:id
   ```
 
-For the methods the following values are accepted: `post`, `get`, `get_item`, `get_collection`, `put`, `patch`, `delete`, `none`, `all`.
+For the methods the following values are accepted: `post`, `get`, `get_item`, `get_collection`, `put`, `patch`, `delete`, `none`.
 
 most of them we are familiar with some are strange btu straight forward. 
 - `get` will create both item and collection routes,
 - `get_item` is for the route that gets a single item, (example `/api/users/:id`).
 - `get_collection` is for the route that gets a collection of items,
-- `none` is for when you don't want to create any route for that model, 
-- and `all` is for all the methods.
+- `none` is for when you don't want to create any route for that model,
 
 
 ### Dto
@@ -315,7 +316,7 @@ There is a lot to improve here, hence it is v0. Things I would like to implement
 - [ ] Add a way to customize the routes, like adding a prefix to all of them.
 - [ ] Add auto Swagger documentation. The entire point of this all eventually is having that.
 - [ ] If you create a Fastify route Anper will not know about it, if we have auto swagger docs we will need a way to add those routes to the docs.
-- [ ] and the one I dread the most at the moment, add support for GraphQL. All my GraphQL knowledge is from using API Platform, so I have no idea how to manually implement it.
+- [ ] add support for GraphQL. this one is a nice to have...
 
 ## Regarding the name
 
@@ -323,5 +324,7 @@ Like GIF where the author wants it to be called JIF, that caused countless hours
 
 Anper is read Anpfer I was hungry and ate the 'f'... I'm sorry.
 
-It stands for: **A**nper **N**ode **P**risma **F**astify **E**ngine **R**est
+It stands for: **A**noter **N**ode **P**risma **F**astify **E**ngine **R**est
+
+I'm assuming there are other projects like this out there... after all this is the Js world. :)
 

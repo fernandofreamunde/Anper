@@ -39,24 +39,30 @@ class CoreController implements ICoreController {
 
     const item = await this.fetchItem(model, params.id, reply)
 
-    if (!item) {
+    if (!item && request.method !== 'PUT') {
       reply.status(404).send({ message: 'Not found' })
     }
-
+    
     if (request.method === 'GET') {
       const mapper = dtoRegistry.getDtoFor({ model })
-
+      
       if (mapper) {
         data = await mapper.toDto(item)
       } else {
         data = item
       }
-
+      
       reply.status(200).send(data)
       return
     }
+    
+    if (request.method === 'PUT' && !item) {
+      (body as any).id = params.id
+      await this.createItem(model, body, reply)
+      return
+    }
 
-    if (request.method === 'PUT') {
+    if (request.method === 'PUT' && item) {
       const { errors, data: validData } = this.validate(body, model)
 
       if (errors.length > 0) {
@@ -107,6 +113,9 @@ class CoreController implements ICoreController {
 
       reply.status(204)
     }
+
+    reply.status(404).send({ message: 'Not found' })
+    
   }
 
   /**
@@ -206,10 +215,6 @@ class CoreController implements ICoreController {
       },
     })
 
-    if (!data) {
-      reply.status(404).send({ message: 'Not found' })
-    }
-
     return data
   }
 
@@ -219,6 +224,10 @@ class CoreController implements ICoreController {
 
     if (errors.length > 0) {
       reply.status(400).send({ errors })
+    }
+
+    if (body.id) {
+      validData.id = body.id
     }
 
     try {
