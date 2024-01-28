@@ -23,7 +23,7 @@ export async function apiRoutes(app: FastifyInstance) {
     }
 
     // then check if there is a mapper/dto for transformation/hiding of fields and validation
-    if (shouldAddRoute(modelAccessRules, 'post')) {
+    if (shouldAddRoute(modelAccessRules, 'post', model)) {
       const postHooks = getHooksFor(modelAccessRules, 'post')
 
       app.post(
@@ -35,7 +35,7 @@ export async function apiRoutes(app: FastifyInstance) {
       )
     }
 
-    if (shouldAddRoute(modelAccessRules, 'get_collection')) {
+    if (shouldAddRoute(modelAccessRules, 'get_collection', model)) {
       const getCollectionHooks = getHooksFor(modelAccessRules, 'get_collection')
 
       app.get(
@@ -47,7 +47,7 @@ export async function apiRoutes(app: FastifyInstance) {
       )
     }
 
-    if (shouldAddRoute(modelAccessRules, 'get_item')) {
+    if (shouldAddRoute(modelAccessRules, 'get_item', model)) {
       const itemHooks = getHooksFor(modelAccessRules, 'get_item')
 
       app.get(
@@ -59,7 +59,7 @@ export async function apiRoutes(app: FastifyInstance) {
       )
     }
 
-    if (shouldAddRoute(modelAccessRules, 'put')) {
+    if (shouldAddRoute(modelAccessRules, 'put', model)) {
       const putHooks = getHooksFor(modelAccessRules, 'put')
 
       app.put(
@@ -71,7 +71,7 @@ export async function apiRoutes(app: FastifyInstance) {
       )
     }
 
-    if (shouldAddRoute(modelAccessRules, 'patch')) {
+    if (shouldAddRoute(modelAccessRules, 'patch', model)) {
       const patchHooks = getHooksFor(modelAccessRules, 'patch')
 
       app.patch(
@@ -83,7 +83,7 @@ export async function apiRoutes(app: FastifyInstance) {
       )
     }
 
-    if (shouldAddRoute(modelAccessRules, 'delete')) {
+    if (shouldAddRoute(modelAccessRules, 'delete', model)) {
       const deleteHooks = getHooksFor(modelAccessRules, 'delete')
 
       app.delete(
@@ -149,9 +149,16 @@ function getHooksFor(modelAccessRules: IAccessRule[], method: RequestMethod) {
 function shouldAddRoute(
   modelAccessRules: IAccessRule[],
   method: RequestMethod,
+  model: string,
 ) {
-  if (modelAccessRules.some((rule) => rule.methods.includes('all'))) {
+  // if there are no rules for the given model enable all methods
+  const existingModelRules = modelAccessRules.filter((rule) => rule.model === model)
+  if (existingModelRules.length === 0) {
     return true
+  }
+  
+  if (modelAccessRules.some((rule) => rule.methods.includes('none'))) {
+    return false
   }
 
   if (method === 'get_item' || method === 'get_collection') {
