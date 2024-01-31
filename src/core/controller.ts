@@ -2,10 +2,10 @@ import {
   ProcessorParams,
   dtoRegistry,
   filterRegistry,
-  modelRegistry,
   validationRegistry,
 } from './registry'
 import { PrismaClient } from '@prisma/client'
+import { FastifyReply } from 'fastify'
 
 export interface ICoreController {
   process: (params: ProcessorParams) => Promise<void>
@@ -13,9 +13,7 @@ export interface ICoreController {
 
 export class CoreController implements ICoreController {
   
-  constructor(private prisma: PrismaClient) {
-    // this.prisma = modelRegistry.getClient()
-  }
+  constructor(private prisma: PrismaClient) { }
 
   async process({ model, reply, request }: ProcessorParams): Promise<any> {
     const prismaModel = this.prisma[model] as any
@@ -41,7 +39,7 @@ export class CoreController implements ICoreController {
       reply.status(404).send({ message: 'Not found' })
     }
 
-    const item = await this.fetchItem(model, params.id, reply)
+    const item = await this.fetchItem(model, params.id)
 
     if (!item && request.method !== 'PUT') {
       reply.status(404).send({ message: 'Not found' })
@@ -149,7 +147,7 @@ export class CoreController implements ICoreController {
     var validData = {}
     // check if data has all the required fields
     // if not throw an error
-    modelFields?.forEach((field) => {
+    modelFields?.forEach((field: any) => {
       // id is not needed
       if (field.isId) {
         return
@@ -180,13 +178,13 @@ export class CoreController implements ICoreController {
     return { errors, data: validData }
   }
 
-  getSortingOptions(model, query): any {
+  getSortingOptions(model: string, query: any): any {
     const fields = this.getModelFields(model)
     const keys = Object.keys(query)
 
     const sortingOptions = keys
       .filter((key) => {
-        const field = fields.find((f) => f.name === key)
+        const field = fields.find((f: any) => f.name === key)
         return field
       })
       .map((key) => {
@@ -210,7 +208,7 @@ export class CoreController implements ICoreController {
     )
   }
 
-  async fetchItem(model, id, reply): Promise<any> {
+  async fetchItem(model: string, id: string): Promise<any> {
     const prismaModel = this.prisma[model] as any
 
     const data = await prismaModel.findUnique({
@@ -222,7 +220,7 @@ export class CoreController implements ICoreController {
     return data
   }
 
-  async createItem(model, body, reply) {
+  async createItem(model: any, body: any, reply: FastifyReply) {
     const prismaModel = this.prisma[model] as any
     const { errors, data: validData } = this.validate(body, model)
 
@@ -278,7 +276,7 @@ export class CoreController implements ICoreController {
     return { take, skip }
   }
 
-  async fetchCollection(model, query): Promise<any> {
+  async fetchCollection(model: any, query: any): Promise<any> {
     const prismaModel = this.prisma[model] as any
     const filters = this.getCustomFilters(model, query)
     const orderBy = this.getSortingOptions(model, query)
