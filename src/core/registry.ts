@@ -1,4 +1,6 @@
+import { Prisma, PrismaClient } from '@prisma/client'
 import { FastifyReply, FastifyRequest } from 'fastify'
+import { CoreController } from './controller'
 
 export type ProcessorParams = {
   model: string
@@ -18,13 +20,22 @@ export interface IProcessor {
 
 class ControllerRegistry {
   private processors: IProcessor[] = []
+  private coreController: CoreController
 
   public register(processor: IProcessor) {
     this.processors.push(processor)
   }
 
+  public registerCore(processor: CoreController) {
+    this.coreController = processor
+  }
+
   public async getProcessorFor(params: SupportsProcessorParams) {
     return await this.processors.find((processor) => processor.supports(params))
+  }
+
+  public getCoreController(): CoreController {
+    return this.coreController
   }
 }
 
@@ -149,13 +160,23 @@ export const validationRegistry = new ValidationRegistry()
 
 class ModelRegistry {
   private models: string[] = []
+  private client: PrismaClient
 
   public register(models: string[]) {
     this.models = models
   }
 
+  public registerClient(client: PrismaClient) {
+    this.client = client
+    controllerRegistry.registerCore(new CoreController(client))
+  }
+
   public getModels(): string[] {
     return this.models
+  }
+
+  public getClient(): PrismaClient {
+    return this.client
   }
 }
 
