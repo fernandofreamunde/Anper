@@ -1,6 +1,6 @@
 {
   "name": "@anper/anper",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "description": "Anper is a framework for fast development/prototyping REST APIs with Node.js. It is built on top of Fastify uses TypeScript and Prisma. It is designed to be simple, fast, and easy to use.",
   "main": "build/index.js",
   "module": "build/index.mjs",
@@ -21,9 +21,9 @@
   "license": "MIT",
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
-    "@prisma/client": "^5.5.2",
+    "@prisma/client": "^5.8.1",
     "fastify": "^4.24.3",
-    "prisma": "^5.5.2",
+    "prisma": "^5.8.1",
     "tsup": "^7.2.0",
     "typescript": "^5.2.2"
   }

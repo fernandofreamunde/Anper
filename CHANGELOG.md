@@ -1,5 +1,11 @@
 # @anper/anper
 
+## 0.1.5
+
+### Patch Changes
+
+- pass prisma client on model registry
+
 ## 0.1.0
 
 ### Minor Changes

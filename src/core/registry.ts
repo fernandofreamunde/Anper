@@ -162,9 +162,11 @@ class ModelRegistry {
   private models: string[] = []
   private client: PrismaClient
 
-  public register(client: PrismaClient) {
-    this.models = Object.keys(Prisma.ModelName)
-    client.category.findMany().then(console.log)
+  public register(models: string[]) {
+    this.models = models
+  }
+
+  public registerClient(client: PrismaClient) {
     this.client = client
     controllerRegistry.registerCore(new CoreController(client))
   }
