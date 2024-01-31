@@ -6,7 +6,7 @@ import {
   controllerRegistry,
   modelRegistry,
 } from './registry'
-import controller from './controller'
+// import controller from './controller'
 
 export async function apiRoutes(app: FastifyInstance) {
   const prismaModels = modelRegistry.getModels()
@@ -120,7 +120,7 @@ async function getProcessorFor(
     return
   }
 
-  await controller.process({ model, request, reply })
+  await controllerRegistry.getCoreController().process({ model, request, reply })
 }
 
 /**

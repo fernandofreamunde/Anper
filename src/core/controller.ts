@@ -2,6 +2,7 @@ import {
   ProcessorParams,
   dtoRegistry,
   filterRegistry,
+  modelRegistry,
   validationRegistry,
 } from './registry'
 import { PrismaClient } from '@prisma/client'
@@ -10,11 +11,18 @@ export interface ICoreController {
   process: (params: ProcessorParams) => Promise<void>
 }
 
-class CoreController implements ICoreController {
-  constructor(private prisma: PrismaClient) {}
+export class CoreController implements ICoreController {
+  
+  constructor(private prisma: PrismaClient) {
+    // this.prisma = modelRegistry.getClient()
+  }
 
   async process({ model, reply, request }: ProcessorParams): Promise<any> {
+    console.log('we are processing')
     const prismaModel = this.prisma[model] as any
+
+    console.log('we are processingsss')
+    // console.log(prismaModel)
     const params = request.params as { id: string }
     const body = request.body ?? {}
     const query = request.query ?? ({} as any)
@@ -275,6 +283,7 @@ class CoreController implements ICoreController {
   }
 
   async fetchCollection(model, query): Promise<any> {
+    console.log('we are here')
     const prismaModel = this.prisma[model] as any
     const filters = this.getCustomFilters(model, query)
     const orderBy = this.getSortingOptions(model, query)
@@ -308,5 +317,5 @@ class CoreController implements ICoreController {
   }
 }
 
-const coreController = new CoreController(new PrismaClient())
-export default coreController
+// const coreController = new CoreController()
+// export default coreController
