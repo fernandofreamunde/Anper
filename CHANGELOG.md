@@ -1,10 +1,12 @@
 # @anper/anper
 
-## 0.1.5
+## 0.1.6
 
 ### Patch Changes
 
 - pass prisma client on model registry
+- More Bugfixes, there is an issue on registering all the models to create the routes directly from Prisma, I think it will be related to the version of Prisma on a project. Documentation will follow soon.
+
 
 ## 0.1.0
 
